@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Крестики-нолики</title>
+    <link type="text/css" rel="stylesheet" href="css/main.css"/>
+    <script src="script/game.js"></script>
+</head>
+<body onload="main()">
+<div class="all-screen">
+    <div class="content">
+        <div class="game-map">
+            <canvas id="map-canvas"></canvas>
+        </div>
+        <div class="user-info">
+            <form onchange="userSetup()">
+                <label for="map-size">Введите размер игрового поля:</label>
+                <input type="number" id="map-size" value="3" min="2" max="9" onchange="reprint()"/>
+                <br/>Выберете сторону:<br/>
+                <label>
+                    <input type="radio" name="side" value="0" checked id="cross-side-radio">Крестики
+                </label>
+                <label>
+                    <input type="radio" name="side" value="1" id="zero-side-radio"> Нолики
+                </label>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
