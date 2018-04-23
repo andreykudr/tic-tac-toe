@@ -28,6 +28,15 @@ function init() {
     gDrawingContext.textBaseline = "middle";
     gDrawingContext.font = "50px verdana";
     gDrawingContext.fillText("X.  /  0.", gCanvasElement.width / 2, gCanvasElement.height / 2);
+
+    var socket = io.connect('http://localhost:9090');
+    socket.on('connect', function () {
+        socket.send('hi');
+
+        socket.on('message', function (msg) {
+            // my msg
+        });
+    });
 }
 
 function restart() {
