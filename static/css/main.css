@@ -1,21 +1,34 @@
 .all-screen {
     align-content: center;
+    font-family: Verdana, serif;
 }
 
 .content {
-    width: 600px;
+    width: 400px;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 30px;
+    margin-top: 200px;
+    background-color: bisque;
+    padding: 10px;
+    box-shadow: inset -2px -2px 1px lightblue;
+}
+
+.content input {
+    margin: 15px;
 }
 
 .game-map {
     margin-left: 10px;
-    border: solid black 1px;
-    display: inline-block;
+    text-align: center;
+}
+
+#map-canvas {
+    background-color: azure;
+    box-shadow: inset -2px -2px 1px 0px lightblue;
 }
 
 .user-info {
+    margin:30px;
     margin-left: 10px;
     display: inline-block;
 }
