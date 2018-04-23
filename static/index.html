@@ -13,7 +13,8 @@
             <canvas id="map-canvas"></canvas>
         </div>
         <div class="user-info">
-            <form id="user-info-form" onsubmit="restart(); return false;">
+            <a id="connect-to-game-link"></a>
+            <form id="user-info-form" onsubmit="start(); return false;">
                 <b>Создать игру:</b><br/>
                 <label for="map-size">Введите размер игрового поля:</label>
                 <input type="number" id="map-size" value="3" min="2" max="9"/>
@@ -31,7 +32,7 @@
 </div>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    var socket = io();
+
 </script>
 </body>
 </html>
