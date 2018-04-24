@@ -5,6 +5,7 @@ var rowsCount;
 
 var field;
 var side;
+var shouldMakeStepVar;
 
 var gDrawingContext;
 var gCanvasElement;
@@ -21,13 +22,32 @@ var sideEnum = {
     EMPTY: "EMPTY"
 };
 
+function drawWait() {
+    gDrawingContext.textAlign = "center";
+    gDrawingContext.textBaseline = "middle";
+    gDrawingContext.font = "50px verdana";
+    gDrawingContext.fillText("wait", gCanvasElement.width / 2, gCanvasElement.height / 2);
+}
+
+function waitSecondPlayer(userId) {
+    document.getElementById("connect-to-game-link").href = "connect?gameId=" + userId;
+    document.getElementById("connect-to-game-link").textContent = userId;
+    drawWait();
+}
+
 function init() {
     socket = io();
-    socket.on('gameId', function (userId) {
-            document.getElementById("connect-to-game-link").href = userId;
-            document.getElementById("connect-to-game-link").textContent = userId;
-        }
-    );
+    socket.on('gameCreated', function(userId) {
+        waitSecondPlayer(userId)
+    });
+    socket.on('connected', function (size, sideP, shouldMakeStep) {
+        side = sideP;
+        shouldMakeStepVar = shouldMakeStep;
+        rowsCount = size;
+        initField();
+        disableInput();
+        reprint();
+    })
     drawInit();
 }
 
@@ -36,6 +56,11 @@ function start() {
     userSetup();
     socket.emit('start game', side, rowsCount)
     reprint();
+}
+
+function connectToGame() {
+    var gameCode = document.getElementById("gameCode").value;
+    socket.emit('connect game', gameCode);
 }
 
 function disableInput() {
@@ -54,7 +79,11 @@ function enableInput() {
 
 function canvasClick(e) {
     var cell = getCursorPosition(e);
-    makeStep(cell)
+    if (shouldMakeStepVar) {
+        makeStep(cell);
+        shouldMakeStepVar = false;
+        drawWait();
+    }
 }
 
 function checkWin(checkingSide) {

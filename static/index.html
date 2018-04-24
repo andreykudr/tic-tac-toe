@@ -25,7 +25,12 @@
                 <label>
                     <input type="radio" name="side" value="1" id="zero-side-radio"> Нолики
                 </label>
-                <input type="submit" value="Играть">
+                <input type="submit" value="Создать игру">
+            </form>
+            <form onsubmit="connectToGame(); return false;">
+                <label><b>Код игры:</b> </label>
+                <input id="gameCode" type="text">
+                <input type="submit" value="Подключиться">
             </form>
         </div>
     </div>

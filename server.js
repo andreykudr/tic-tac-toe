@@ -8,9 +8,19 @@ app.get('/', function(req, res){
     res.sendFile(__dirname + '/static/index.html');
 });
 
+app.get('/connect', function (req, res) {
+   var gameId = req.query.gameId;
+   games[gameId].secondUser = 1;
+   res.sendFile(__dirname + '/static/index.html');
+});
+
 io.on('connection', function(socket){
     socket.on('start game', function (side, mapSize) {
         initNewGame(side, mapSize, socket.id)
+    })
+
+    socket.on('connect game', function (gameId) {
+        connectToGame(gameId, socket.id);
     })
 
 });
@@ -57,12 +67,33 @@ var sideEnum = {
 function initNewGame(side, mapSize, userId) {
     console.log('New game: ' + side + ' userId ' + userId);
     var mainPlayer = new Player(userId, side);
-    var game = new Game(mainPlayer, new Field);
+    var game = new Game(mainPlayer, new Field(mapSize));
     games[userId] = game;
-    io.sockets.connected[userId].emit('gameId', userId);
+    io.sockets.connected[userId].emit('gameCreated', userId);
 }
 
 function connectToGame(gameId, userId) {
     var game = games[gameId];
     game.secondUser = userId;
+    var secondSide = getSecondPlayerSize(game);
+    var size = game.field.size;
+    var shouldMakeStep = secondSide == sideEnum.CROSS;
+    io.sockets.connected[userId].emit('connected', size, secondSide, shouldMakeStep);
+    io.sockets.connected[gameId].emit('connected', size, secondSide, shouldMakeStep);
+}
+
+function getSecondPlayerSize(game) {
+    var secondSide;
+    if (game.mainPlayer.side == sideEnum.CROSS) {
+        secondSide = sideEnum.ZERO;
+    } else {
+        secondSide = sideEnum.CROSS;
+    }
+    return secondSide;
+}
+
+function Cell(row, column) {
+    this.row = row;
+    this.column = column;
+    this.side = sideEnum.EMPTY;
 }
