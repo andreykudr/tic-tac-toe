@@ -27,11 +27,13 @@ io.on('connection', function(socket){
         var game = games[gameId];
         game.field.field[cell.row][cell.column] = cell;
         if (checkWin(sideEnum.ZERO, game.field)) {
-            io.sockets.connected[userId].emit('gameOver', sideEnum.ZERO);
+            io.sockets.connected[gameId].emit('gameOver', sideEnum.ZERO);
             io.sockets.connected[game.secondUser].emit('gameOver', sideEnum.ZERO);
-        } else if (checkWin(sideEnum.CROSS, game.field.field)) {
-            io.sockets.connected[userId].emit('gameOver', sideEnum.CROSS);
+            game.field = new Field(game.field.size);
+        } else if (checkWin(sideEnum.CROSS, game.field)) {
+            io.sockets.connected[gameId].emit('gameOver', sideEnum.CROSS);
             io.sockets.connected[game.secondUser].emit('gameOver', sideEnum.CROSS);
+            game.field = new Field(game.field.size);
         } else {
             var currentUser = socket.id;
             if (currentUser == gameId) {

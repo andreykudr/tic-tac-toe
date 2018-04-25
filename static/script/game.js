@@ -49,6 +49,9 @@ function init() {
         initField();
         disableInput();
         reprint();
+        if (!shouldMakeStepVar) {
+            drawWait();
+        }
     });
     socket.on('yourStep', function(cell) {
         field[cell.row][cell.column].side = cell.side;
@@ -112,6 +115,7 @@ function printWinner(side) {
 
 function makeStep(cell) {
     if (field[cell.row][cell.column].side == sideEnum.EMPTY) {
+        cell.side = side;
         drawPiece(cell);
         field[cell.row][cell.column] = cell;
 
@@ -148,7 +152,7 @@ function initField() {
 function drawPiece(cell) {
     var x = (cell.column * cellSize) + (cellSize / 2);
     var y = (cell.row * cellSize) + (cellSize / 2);
-    switch (side) {
+    switch (cell.side) {
         case sideEnum.CROSS:
             drawCross(x, y);
             break;
@@ -203,6 +207,11 @@ function reprint() {
         }
     }
 
+    for (var i = 0; i < rowsCount; ++i) {
+        for (var j = 0; j < rowsCount; ++j) {
+            drawPiece(field[i][j]);
+        }
+    }
 }
 
 function getCursorPosition(e) {
