@@ -13,7 +13,7 @@
             <canvas id="map-canvas"></canvas>
         </div>
         <div class="user-info">
-            <a id="connect-to-game-link"></a>
+            <div id="connect-to-game-link"></div>
             <form id="user-info-form" onsubmit="start(); return false;">
                 <b>Создать игру:</b><br/>
                 <label for="map-size">Введите размер игрового поля:</label>
@@ -29,7 +29,7 @@
             </form>
             <form onsubmit="connectToGame(); return false;">
                 <label><b>Код игры:</b> </label>
-                <input id="gameCode" type="text">
+                <input id="gameCode" required type="text">
                 <input type="submit" value="Подключиться">
             </form>
         </div>

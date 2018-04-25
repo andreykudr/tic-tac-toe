@@ -26,13 +26,13 @@ var sideEnum = {
 function drawWait() {
     gDrawingContext.textAlign = "center";
     gDrawingContext.textBaseline = "middle";
-    gDrawingContext.font = "50px verdana";
+    gDrawingContext.font = "30px verdana";
+    gDrawingContext.fillStyle = 'blue';
     gDrawingContext.fillText("wait", gCanvasElement.width / 2, gCanvasElement.height / 2);
 }
 
 function waitSecondPlayer(userId) {
-    document.getElementById("connect-to-game-link").href = "connect?gameId=" + userId;
-    document.getElementById("connect-to-game-link").textContent = userId;
+    document.getElementById("connect-to-game-link").textContent = "Код игры для подключения: " + userId;
     drawWait();
     gameId = userId;
 }
@@ -44,6 +44,12 @@ function init() {
     });
     socket.on('connected', function (size, sideP, shouldMakeStep) {
         side = sideP;
+        if (side === sideEnum.ZERO){
+            document.getElementById('zero-side-radio').checked = true;
+        } else {
+            document.getElementById('cross-side-radio').checked = true;
+        }
+        document.getElementById('map-size').value = size;
         shouldMakeStepVar = shouldMakeStep;
         rowsCount = size;
         initField();
@@ -103,6 +109,7 @@ function canvasClick(e) {
 function endGame(side) {
     printWinner(side);
     enableInput();
+    initField();
 }
 
 function printWinner(side) {

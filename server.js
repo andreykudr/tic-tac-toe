@@ -8,12 +8,6 @@ app.get('/', function(req, res){
     res.sendFile(__dirname + '/static/index.html');
 });
 
-app.get('/connect', function (req, res) {
-   var gameId = req.query.gameId;
-   games[gameId].secondUser = 1;
-   res.sendFile(__dirname + '/static/index.html');
-});
-
 io.on('connection', function(socket){
     socket.on('start game', function (side, mapSize) {
         initNewGame(side, mapSize, socket.id)
@@ -34,6 +28,9 @@ io.on('connection', function(socket){
             io.sockets.connected[gameId].emit('gameOver', sideEnum.CROSS);
             io.sockets.connected[game.secondUser].emit('gameOver', sideEnum.CROSS);
             game.field = new Field(game.field.size);
+        } else if (checkTie(game.field)) {
+            io.sockets.connected[gameId].emit('gameOver', sideEnum.EMPTY);
+            io.sockets.connected[game.secondUser].emit('gameOver', sideEnum.EMPTY);
         } else {
             var currentUser = socket.id;
             if (currentUser == gameId) {
@@ -139,4 +136,17 @@ function checkWin(checkingSide, field) {
         }
     }
     return false;
+}
+
+function checkTie(field) {
+
+    for (var i = 0; i < field.size; ++i) {
+        var tie = true;
+        for (var j = 0; j < field.size; ++j) {
+            if (field.field[i][j].side == sideEnum.EMPTY) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
