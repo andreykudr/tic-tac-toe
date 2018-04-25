@@ -6,6 +6,7 @@ var rowsCount;
 var field;
 var side;
 var shouldMakeStepVar;
+var gameId;
 
 var gDrawingContext;
 var gCanvasElement;
@@ -33,6 +34,7 @@ function waitSecondPlayer(userId) {
     document.getElementById("connect-to-game-link").href = "connect?gameId=" + userId;
     document.getElementById("connect-to-game-link").textContent = userId;
     drawWait();
+    gameId = userId;
 }
 
 function init() {
@@ -47,6 +49,14 @@ function init() {
         initField();
         disableInput();
         reprint();
+    });
+    socket.on('yourStep', function(cell) {
+        field[cell.row][cell.column].side = cell.side;
+        shouldMakeStepVar = true;
+        reprint();
+    });
+    socket.on('gameOver', function (winSide) {
+        endGame(winSide);
     })
     drawInit();
 }
@@ -61,6 +71,7 @@ function start() {
 function connectToGame() {
     var gameCode = document.getElementById("gameCode").value;
     socket.emit('connect game', gameCode);
+    gameId = gameCode;
 }
 
 function disableInput() {
@@ -81,30 +92,10 @@ function canvasClick(e) {
     var cell = getCursorPosition(e);
     if (shouldMakeStepVar) {
         makeStep(cell);
-        shouldMakeStepVar = false;
         drawWait();
     }
 }
 
-function checkWin(checkingSide) {
-
-    for (var i = 0; i < rowsCount; ++i) {
-        var winHorizontal = true;
-        var winVertical = true;
-        var winDiagonal1 = true;
-        var winDiagonal2 = true;
-        for (var j = 0; j < rowsCount; ++j) {
-            winHorizontal = winHorizontal & (field[i][j].side == checkingSide);
-            winVertical = winVertical & (field[j][i].side == checkingSide);
-            winDiagonal1 = winDiagonal1 & (field[j][j].side == checkingSide);
-            winDiagonal2 = winDiagonal2 & (field[rowsCount - j - 1][j].side == checkingSide);
-        }
-        if (winVertical | winHorizontal | winDiagonal1 | winDiagonal2) {
-            return true;
-        }
-    }
-    return false;
-}
 
 function endGame(side) {
     printWinner(side);
@@ -122,13 +113,10 @@ function printWinner(side) {
 function makeStep(cell) {
     if (field[cell.row][cell.column].side == sideEnum.EMPTY) {
         drawPiece(cell);
-        field[cell.row][cell.column].side = side;
-    }
+        field[cell.row][cell.column] = cell;
 
-    if (checkWin(sideEnum.ZERO)) {
-        endGame(sideEnum.ZERO);
-    } else if (checkWin(sideEnum.CROSS)) {
-        endGame(sideEnum.CROSS);
+        shouldMakeStepVar = false;
+        socket.emit('stepMade', cell, gameId);
     }
 }
 
