@@ -91,14 +91,16 @@ function initNewGame(side, mapSize, userId) {
 
 function connectToGame(gameId, userId) {
     var game = games[gameId];
-    game.secondUser = userId;
-    var secondSide = getSecondPlayerSize(game);
-    var size = game.field.size;
-    /*cross always should make step first*/
-    var secondPlayerShouldMakeStep = secondSide == sideEnum.CROSS;
-    io.sockets.connected[userId].emit('connected', size, secondSide, secondPlayerShouldMakeStep);
-    if (!secondPlayerShouldMakeStep) {
-        io.sockets.connected[gameId].emit('yourStep', game.field.field[0][0]);
+    if (game !== undefined) {
+        game.secondUser = userId;
+        var secondSide = getSecondPlayerSize(game);
+        var size = game.field.size;
+        /*cross always should make step first*/
+        var secondPlayerShouldMakeStep = secondSide == sideEnum.CROSS;
+        io.sockets.connected[userId].emit('connected', size, secondSide, secondPlayerShouldMakeStep);
+        if (!secondPlayerShouldMakeStep) {
+            io.sockets.connected[gameId].emit('yourStep', game.field.field[0][0]);
+        }
     }
 }
 
